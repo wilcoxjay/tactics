@@ -162,7 +162,41 @@ Ltac find_higher_order_rewrite :=
     | [ H : forall _ _, _ = _ |- _ ] => rewrite H in *
   end.
 
+Ltac find_reverse_higher_order_rewrite :=
+  match goal with
+    | [ H : _ = _ |- _ ] => rewrite <- H in *
+    | [ H : forall _, _ = _ |- _ ] => rewrite <- H in *
+    | [ H : forall _ _, _ = _ |- _ ] => rewrite <- H in *
+  end.
+
 Ltac clean :=
   match goal with
     | [ H : ?X = ?X |- _ ] => clear H
+  end.
+
+Ltac find_apply_hyp_goal :=
+  match goal with
+    | [ H : _ |- _ ] => solve [apply H]
+  end.
+
+Ltac find_copy_apply_lem_hyp lem :=
+  match goal with
+    | [ H : _ |- _ ] => copy_apply lem H
+  end.
+
+Ltac find_apply_hyp_hyp :=
+  match goal with
+    | [ H : forall _, _ -> _,
+          H' : _ |- _ ] =>
+      apply H in H'; [idtac]
+  end.
+
+Ltac find_apply_lem_hyp lem :=
+  match goal with
+    | [ H : _ |- _ ] => apply lem in H
+  end.
+
+Ltac find_eapply_lem_hyp lem :=
+  match goal with
+    | [ H : _ |- _ ] => eapply lem in H
   end.
