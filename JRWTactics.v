@@ -100,6 +100,13 @@ Ltac find_rewrite :=
     | [ H : ?X = _ |- context [ ?X ] ] => rewrite H
   end.
 
+Ltac find_reverse_rewrite :=
+  match goal with
+    | [ H : _ = ?X _ _ _ _, H' : ?X _ _ _ _ = _ |- _ ] => rewrite <- H in H'
+    | [ H : _ = ?X, H' : context [ ?X ] |- _ ] => rewrite <- H in H'
+    | [ H : _ = ?X |- context [ ?X ] ] => rewrite <- H
+  end.
+
 Ltac find_inversion :=
   match goal with
     | [ H : ?X _ _ _ _ _ _ = ?X _ _ _ _ _ _ |- _ ] => invc H
@@ -108,6 +115,13 @@ Ltac find_inversion :=
     | [ H : ?X _ _ _ = ?X _ _ _ |- _ ] => invc H
     | [ H : ?X _ _ = ?X _ _ |- _ ] => invc H
     | [ H : ?X _ = ?X _ |- _ ] => invc H
+  end.
+
+Ltac tuple_inversion :=
+  match goal with
+    | [ H : (_, _, _, _) = (_, _, _, _) |- _ ] => invc H
+    | [ H : (_, _, _) = (_, _, _) |- _ ] => invc H
+    | [ H : (_, _) = (_, _) |- _ ] => invc H
   end.
 
 Ltac f_apply H f :=
@@ -121,3 +135,34 @@ Ltac break_let :=
     | [ H : context [ (let (_,_) := ?X in _) ] |- _ ] => destruct X eqn:?
   end.
 
+Ltac break_or_hyp :=
+  match goal with
+    | [ H : _ \/ _ |- _ ] => invc H
+  end.
+
+Ltac copy_apply lem H :=
+  let x := fresh in
+  pose proof H as x;
+    apply lem in x.
+
+Ltac copy_eapply lem H :=
+  let x := fresh in
+  pose proof H as x;
+    eapply lem in x.
+
+Ltac conclude_using tac :=
+  match goal with
+    | [ H : ?P -> _ |- _ ] => conclude H tac
+  end.
+
+Ltac find_higher_order_rewrite :=
+  match goal with
+    | [ H : _ = _ |- _ ] => rewrite H in *
+    | [ H : forall _, _ = _ |- _ ] => rewrite H in *
+    | [ H : forall _ _, _ = _ |- _ ] => rewrite H in *
+  end.
+
+Ltac clean :=
+  match goal with
+    | [ H : ?X = ?X |- _ ] => clear H
+  end.
