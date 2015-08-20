@@ -376,3 +376,8 @@ Ltac find_injection :=
     | [ H : ?X _ _ = ?X _ _ |- _ ] => injc H
     | [ H : ?X _ = ?X _ |- _ ] => injc H
   end.
+
+Ltac break_exists_name x :=
+  match goal with
+  | [ H : exists _, _ |- _ ] => destruct H as [x H]
+  end.
