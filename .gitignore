@@ -3,3 +3,4 @@
 *~
 *.aux
 .coq-native/
+*.v.d
